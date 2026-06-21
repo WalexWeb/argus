@@ -1,0 +1,403 @@
+{
+  "description": "Моковые логи для АРГУС — имитация источников IDS/IPS, веб-серверов, почтовых шлюзов, AD и файловых систем",
+  "logs": [
+    {
+      "format": "syslog",
+      "raw": "<134>Jun 21 10:00:01 fw01 suricata[4521]: [1:2001219:4] ET SCAN Potential SSH Scan [Classification: Attempted Information Leak] [Priority: 2] {TCP} 185.220.101.45:54321 -> 10.0.1.50:22"
+    },
+    {
+      "format": "json",
+      "source": "ids-ips",
+      "data": {
+        "timestamp": "2026-06-21T10:00:05.000Z",
+        "event_type": "intrusion_detected",
+        "severity": "high",
+        "src_ip": "185.220.101.45",
+        "dst_ip": "10.0.1.50",
+        "signature": "ET SCAN Potential SSH Scan",
+        "protocol": "TCP",
+        "port": 22
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:01:00.000Z",
+        "event_type": "login_failed",
+        "username": "user01",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:01:30.000Z",
+        "event_type": "login_failed",
+        "username": "user02",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:02:00.000Z",
+        "event_type": "login_failed",
+        "username": "user03",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:02:30.000Z",
+        "event_type": "login_failed",
+        "username": "user04",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:03:00.000Z",
+        "event_type": "login_failed",
+        "username": "user05",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:03:30.000Z",
+        "event_type": "login_failed",
+        "username": "user06",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:04:00.000Z",
+        "event_type": "login_failed",
+        "username": "user07",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:04:30.000Z",
+        "event_type": "login_failed",
+        "username": "user08",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:05:00.000Z",
+        "event_type": "login_failed",
+        "username": "user09",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:05:30.000Z",
+        "event_type": "login_failed",
+        "username": "user10",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:06:00.000Z",
+        "event_type": "login_failed",
+        "username": "user11",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:06:30.000Z",
+        "event_type": "login_failed",
+        "username": "user12",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:07:00.000Z",
+        "event_type": "login_failed",
+        "username": "user13",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:07:30.000Z",
+        "event_type": "login_failed",
+        "username": "user14",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:08:00.000Z",
+        "event_type": "login_failed",
+        "username": "user15",
+        "ip": "185.220.101.45",
+        "reason": "invalid_credentials",
+        "country": "DE"
+      }
+    },
+    {
+      "format": "json",
+      "source": "mail-gateway",
+      "data": {
+        "timestamp": "2026-06-21T10:05:10.000Z",
+        "event_type": "email_access",
+        "username": "ceo@company.com",
+        "ip": "52.12.34.56",
+        "action": "webmail_login",
+        "country": "US"
+      }
+    },
+    {
+      "format": "json",
+      "source": "mail-gateway",
+      "data": {
+        "timestamp": "2026-06-21T10:12:20.000Z",
+        "event_type": "email_access",
+        "username": "ceo@company.com",
+        "ip": "91.203.44.10",
+        "action": "webmail_login",
+        "country": "RU"
+      }
+    },
+    {
+      "format": "json",
+      "source": "mail-gateway",
+      "data": {
+        "timestamp": "2026-06-21T10:20:30.000Z",
+        "event_type": "email_access",
+        "username": "ceo@company.com",
+        "ip": "114.55.66.77",
+        "action": "webmail_login",
+        "country": "CN"
+      }
+    },
+    {
+      "format": "syslog",
+      "raw": "<142>Jun 21 10:10:15 mail01 postfix/smtpd[8821]: NOQUEUE: reject: RCPT from unknown[198.51.100.42]: 550 5.1.1 <fake-invoice@phish-domain.ru>: Recipient address rejected"
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:15:00.000Z",
+        "event_type": "http_request",
+        "method": "GET",
+        "path": "/api/health",
+        "status": 200,
+        "ip": "10.0.0.5",
+        "user_agent": "kube-probe/1.28",
+        "bytes_sent": 42
+      }
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:16:22.000Z",
+        "event_type": "http_request",
+        "method": "POST",
+        "path": "/login",
+        "status": 401,
+        "ip": "203.0.113.88",
+        "user_agent": "Mozilla/5.0",
+        "bytes_sent": 128
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:30:00.000Z",
+        "event_type": "login_failed",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "reason": "invalid_credentials",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:31:00.000Z",
+        "event_type": "login_failed",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "reason": "invalid_credentials",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:32:00.000Z",
+        "event_type": "login_failed",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "reason": "invalid_credentials",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:33:00.000Z",
+        "event_type": "login_failed",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "reason": "invalid_credentials",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:34:00.000Z",
+        "event_type": "login_failed",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "reason": "invalid_credentials",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:36:00.000Z",
+        "event_type": "login_success",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "country": "UA"
+      }
+    },
+    {
+      "format": "json",
+      "source": "file-server",
+      "data": {
+        "timestamp": "2026-06-21T10:37:00.000Z",
+        "event_type": "file_access",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "resource": "/confidential/financial-report-2026.pdf",
+        "action": "read",
+        "classification": "confidential"
+      }
+    },
+    {
+      "format": "json",
+      "source": "ids-ips",
+      "data": {
+        "timestamp": "2026-06-21T10:40:00.000Z",
+        "event_type": "intrusion_detected",
+        "severity": "medium",
+        "src_ip": "198.51.100.42",
+        "dst_ip": "10.0.1.100",
+        "signature": "ET POLICY Suspicious inbound to PostgreSQL",
+        "protocol": "TCP",
+        "port": 5432
+      }
+    },
+    {
+      "format": "syslog",
+      "raw": "<134>Jun 21 10:45:00 vpn01 openvpn[3312]: 10.0.0.15:51234 TLS Error: TLS key negotiation failed to occur within 60 seconds"
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:50:00.000Z",
+        "event_type": "http_request",
+        "method": "GET",
+        "path": "/dashboard",
+        "status": 200,
+        "ip": "10.0.0.12",
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0)",
+        "bytes_sent": 4521
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T10:55:00.000Z",
+        "event_type": "login_success",
+        "username": "analyst01",
+        "ip": "10.0.0.12",
+        "country": "RU"
+      }
+    },
+    {
+      "format": "csv",
+      "source": "internal-audit",
+      "data": "2026-06-21T11:00:00.000Z,usb_insert,workstation-42,employee@company.com,USB device SanDisk 32GB connected"
+    }
+  ]
+}

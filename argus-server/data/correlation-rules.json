@@ -1,0 +1,34 @@
+[
+  {
+    "rule": "MULTIPLE_USERS_SAME_IP",
+    "name": "Подбор пароля (Password Spraying)",
+    "description": "Один IP-адрес пытается войти в более чем 10 разных учётных записей за 10 минут",
+    "condition": "count(distinct users) > 10 within 10m group by ip",
+    "severity": "high",
+    "action": "create_alert"
+  },
+  {
+    "rule": "EMAIL_MULTIPLE_COUNTRIES",
+    "name": "Подозрение на фишинг",
+    "description": "Один email-адрес используется с IP из трёх и более разных стран",
+    "condition": "count(distinct countries) >= 3 group by email",
+    "severity": "critical",
+    "action": "create_alert"
+  },
+  {
+    "rule": "ACCOUNT_COMPROMISE_CHAIN",
+    "name": "Компрометация аккаунта",
+    "description": "Серия неудачных входов → успешный вход → доступ к конфиденциальным данным",
+    "condition": "failed_logins >= 3 then login_success then file_access confidential within 15m",
+    "severity": "critical",
+    "action": "create_alert"
+  },
+  {
+    "rule": "IDS_HIGH_SEVERITY",
+    "name": "Критическое срабатывание IDS/IPS",
+    "description": "Обнаружена атака высокой критичности от IDS/IPS",
+    "condition": "event_type = intrusion_detected AND severity = high",
+    "severity": "high",
+    "action": "create_alert"
+  }
+]

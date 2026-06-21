@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+:root {
+  --bg-base: #0a0c0a;
+  --bg-surface: #111411;
+  --bg-elevated: #181c17;
+  --bg-hover: #1f241c;
+  --border: rgba(168, 213, 186, 0.08);
+  --border-strong: rgba(168, 213, 186, 0.14);
+  --text-primary: #f4f7f2;
+  --text-secondary: #b8c4b0;
+  --text-muted: #7a8a74;
+  --accent: #a8d5ba;
+  --accent-bright: #c5e384;
+  --accent-deep: #7cb668;
+  --accent-glow: rgba(168, 213, 186, 0.18);
+  --success: #86efac;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --critical: #ef4444;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-pistachio-300: #c5e384;
+  --color-pistachio-400: #a8d5ba;
+  --color-pistachio-500: #93c572;
+  --color-pistachio-600: #7cb668;
+  --color-pistachio-700: #5a9e4b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.mesh-bg {
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 10% -5%, rgba(147, 197, 114, 0.14), transparent),
+    radial-gradient(ellipse 55% 45% at 90% 5%, rgba(168, 213, 186, 0.1), transparent),
+    radial-gradient(ellipse 45% 35% at 50% 100%, rgba(124, 182, 104, 0.08), transparent);
+}
+
+.glass-card {
+  background: rgba(20, 24, 18, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+.glass-sidebar {
+  background: rgba(12, 14, 11, 0.92);
+  backdrop-filter: blur(24px);
+  border-right: 1px solid var(--border);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(168, 213, 186, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 213, 186, 0.28);
+}
