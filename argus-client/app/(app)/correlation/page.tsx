@@ -1,7 +1,7 @@
 import { getRules, getCorrelationGraph, getAlerts } from '@/lib/api';
 import { ApiError } from '@/components/ApiError';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { CorrelationGraph } from '@/components/CorrelationGraph';
+import { CorrelationView } from '@/components/correlation/CorrelationView';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { SeverityBadge } from '@/components/ui/Badge';
 
@@ -24,57 +24,37 @@ export default async function CorrelationPage() {
     <>
       <PageHeader
         title="Корреляция"
-        description="Правила связывания событий и граф связей между IP, пользователями и системами"
+        description="Визуализация цепочек: источник → IP → пользователь → алерт"
       />
 
-      <section className="mb-8 grid gap-4 sm:grid-cols-3">
-        <Card>
-          <p className="text-base text-zinc-500">Правил</p>
-          <p className="mt-1 text-4xl font-bold text-zinc-50">{rules.rules.length}</p>
-        </Card>
-        <Card>
-          <p className="text-base text-zinc-500">Узлов графа</p>
-          <p className="mt-1 text-4xl font-bold text-zinc-50">{graph.nodes.length}</p>
-        </Card>
-        <Card>
-          <p className="text-base text-zinc-500">Связей</p>
-          <p className="mt-1 text-4xl font-bold text-zinc-50">{graph.edges.length}</p>
-        </Card>
-      </section>
+      <CorrelationView
+        nodes={graph.nodes}
+        edges={graph.edges}
+        alerts={alerts.alerts}
+        rules={rules.rules}
+      />
 
-      <section className="mb-8">
-        <Card>
-          <CardHeader
-            title="Граф корреляции"
-            subtitle="IP ↔ пользователи ↔ источники ↔ алерты"
-          />
-          <CorrelationGraph nodes={graph.nodes} edges={graph.edges} />
-        </Card>
-      </section>
-
-      <section>
+      <section className="mt-10">
         <Card>
           <CardHeader
             title="Правила корреляции"
-            subtitle="JSON-конфигурация из correlation-rules.json"
+            subtitle="Конфигурация из correlation-rules.json"
           />
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             {rules.rules.map((rule) => {
               const triggered = alerts.alerts.filter(
                 (a) => a.rule === rule.rule,
-              ).length;
+              );
 
               return (
                 <div
                   key={rule.rule}
-                  className="rounded-xl border border-white/[0.06] bg-gradient-to-br from-white/[0.03] to-transparent p-5"
+                  className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-mono text-xs text-pistachio-400">
-                        {rule.rule}
-                      </p>
-                      <h3 className="mt-1 font-semibold text-zinc-100">
+                      <p className="font-mono text-sm text-pistachio-400">{rule.rule}</p>
+                      <h3 className="mt-1 text-lg font-semibold text-zinc-100">
                         {rule.name}
                       </h3>
                     </div>
@@ -84,19 +64,31 @@ export default async function CorrelationPage() {
                       }
                     />
                   </div>
-                  <p className="mt-2 text-sm text-zinc-500">{rule.description}</p>
-                  <div className="mt-3 rounded-lg bg-black/30 p-3">
-                    <code className="block font-mono text-sm leading-relaxed text-pistachio-400/70">
+
+                  <p className="mt-3 text-base text-zinc-400">{rule.description}</p>
+
+                  <div className="mt-4 rounded-xl bg-black/30 px-4 py-3">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-zinc-600">
+                      Условие
+                    </p>
+                    <code className="mt-1 block font-mono text-sm leading-relaxed text-pistachio-300">
                       {rule.condition}
                     </code>
                   </div>
-                  <p className="mt-3 text-xs text-zinc-600">
-                    Срабатываний:{' '}
-                    <span className="font-mono text-zinc-400">{triggered}</span>
-                    {' · '}
-                    Действие:{' '}
-                    <span className="font-mono text-zinc-400">{rule.action}</span>
-                  </p>
+
+                  {triggered.length > 0 && (
+                    <ul className="mt-4 space-y-2 border-t border-white/[0.06] pt-4">
+                      {triggered.map((alert) => (
+                        <li
+                          key={alert.id}
+                          className="flex items-center justify-between gap-3 text-sm"
+                        >
+                          <span className="text-zinc-300">#{alert.id} {alert.name}</span>
+                          <SeverityBadge severity={alert.severity} />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               );
             })}
