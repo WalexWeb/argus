@@ -58,7 +58,7 @@ export function EventsExplorer({ events }: { events: SecurityEvent[] }) {
           placeholder="Поиск по IP, пользователю, типу..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className={`min-w-[220px] flex-1 ${inputClass}`}
+          className={`min-w-55 flex-1 ${inputClass}`}
         />
         <select
           value={source}

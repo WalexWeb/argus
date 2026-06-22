@@ -203,7 +203,7 @@ export function CorrelationView({
             className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
               !selectedAlertId && !selectedRule
                 ? 'bg-pistachio-500/20 text-pistachio-300 ring-1 ring-pistachio-500/40'
-                : 'bg-white/[0.04] text-zinc-400 hover:text-zinc-200'
+                : 'bg-white/4 text-zinc-400 hover:text-zinc-200'
             }`}
           >
             Все корреляции
@@ -230,7 +230,7 @@ export function CorrelationView({
               className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-left transition ${
                 selectedAlertId === alert.id
                   ? 'border-pistachio-500/50 bg-pistachio-500/15'
-                  : 'border-white/[0.06] bg-white/[0.02] hover:border-pistachio-500/30'
+                  : 'border-white/6 bg-white/2 hover:border-pistachio-500/30'
               }`}
             >
               <SeverityBadge severity={alert.severity} />
@@ -239,7 +239,7 @@ export function CorrelationView({
           ))}
         </div>
 
-        <div className="mt-3 flex flex-wrap gap-2 border-t border-white/[0.06] pt-3">
+        <div className="mt-3 flex flex-wrap gap-2 border-t border-white/6 pt-3">
           <span className="mr-1 self-center text-xs text-zinc-600">Правила:</span>
           {rules.map((rule) => (
             <button
@@ -252,7 +252,7 @@ export function CorrelationView({
               className={`rounded-lg px-3 py-1.5 font-mono text-xs transition ${
                 selectedRule === rule.rule
                   ? 'bg-pistachio-500/20 text-pistachio-300'
-                  : 'bg-white/[0.04] text-zinc-500 hover:text-zinc-300'
+                  : 'bg-white/4 text-zinc-500 hover:text-zinc-300'
               }`}
             >
               {rule.rule}
@@ -275,11 +275,11 @@ export function CorrelationView({
         </div>
 
         {flowNodes.length === 0 ? (
-          <div className="flex h-[640px] w-full items-center justify-center text-base text-zinc-500">
+          <div className="flex h-160 w-full items-center justify-center text-base text-zinc-500">
             Нет данных для отображения графа
           </div>
         ) : (
-          <div className="h-[640px] w-full">
+          <div className="h-160 w-full">
             <ReactFlow
               nodes={flowNodes}
               edges={flowEdges}
@@ -296,7 +296,7 @@ export function CorrelationView({
               <Background color="#3a4a36" gap={24} size={1.5} />
               <Controls
                 position="bottom-right"
-                className="!rounded-xl !border-white/10 !bg-[#111411]/90 !shadow-lg [&>button]:!border-white/10 [&>button]:!bg-transparent [&>button]:!text-zinc-300 [&>button:hover]:!bg-white/5"
+                className="rounded-xl! border-white/10! bg-[#111411]/90! shadow-lg! [&>button]:border-white/10! [&>button]:bg-transparent! [&>button]:text-zinc-300! [&>button:hover]:bg-white/5!"
               />
             </ReactFlow>
           </div>

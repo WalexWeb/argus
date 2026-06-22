@@ -49,7 +49,7 @@ export default async function CorrelationPage() {
               return (
                 <div
                   key={rule.rule}
-                  className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6"
+                  className="rounded-2xl border border-white/6 bg-white/2 p-6"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
@@ -77,7 +77,7 @@ export default async function CorrelationPage() {
                   </div>
 
                   {triggered.length > 0 && (
-                    <ul className="mt-4 space-y-2 border-t border-white/[0.06] pt-4">
+                    <ul className="mt-4 space-y-2 border-t border-white/6 pt-4">
                       {triggered.map((alert) => (
                         <li
                           key={alert.id}

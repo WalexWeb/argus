@@ -1,23 +1,22 @@
-import dagre from '@dagrejs/dagre';
 import type { GraphEdge, GraphNode } from '@/lib/api';
 import type { Edge, Node } from '@xyflow/react';
 import { MarkerType } from '@xyflow/react';
 import { GROUP_LABELS } from './constants';
 
-const GROUP_RANK: Record<string, number> = {
-  source: 0,
-  ip: 1,
-  user: 2,
-  alert: 3,
+const GROUP_COLUMN_X: Record<string, number> = {
+  source: 80,
+  ip: 420,
+  user: 760,
+  alert: 1100,
 };
 
 const NODE_WIDTH = 250;
-const NODE_HEIGHT = 92;
-
-function getRank(nodeId: string, nodeMap: Map<string, GraphNode>): number {
-  const node = nodeMap.get(nodeId);
-  return node ? (GROUP_RANK[node.group] ?? 1) : 1;
-}
+const GROUP_ORDER: Array<keyof typeof GROUP_COLUMN_X> = [
+  'source',
+  'ip',
+  'user',
+  'alert',
+];
 
 export function layoutGraphNodes(
   nodes: GraphNode[],
@@ -30,68 +29,47 @@ export function layoutGraphNodes(
 
   if (activeNodes.length === 0) return [];
 
-  const nodeMap = new Map(activeNodes.map((n) => [n.id, n]));
-  const activeIds = new Set(activeNodes.map((n) => n.id));
-
-  const activeEdges = edges.filter(
-    (e) => activeIds.has(e.from) && activeIds.has(e.to),
-  );
-
-  const g = new dagre.graphlib.Graph();
-  g.setDefaultEdgeLabel(() => ({}));
-  g.setGraph({
-    rankdir: 'LR',
-    align: 'UL',
-    nodesep: 110,
-    ranksep: 260,
-    edgesep: 80,
-    marginx: 60,
-    marginy: 60,
-  });
+  const grouped: Record<
+    keyof typeof GROUP_COLUMN_X,
+    GraphNode[]
+  > = {
+    source: [],
+    ip: [],
+    user: [],
+    alert: [],
+  };
 
   for (const node of activeNodes) {
-    g.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
+    grouped[node.group as keyof typeof grouped]?.push(node);
   }
 
-  const edgeKeys = new Set<string>();
+  for (const group of GROUP_ORDER) {
+    grouped[group].sort((a, b) => a.label.localeCompare(b.label));
+  }
 
-  for (const edge of activeEdges) {
-    let from = edge.from;
-    let to = edge.to;
-    const fromRank = getRank(from, nodeMap);
-    const toRank = getRank(to, nodeMap);
+  const rowGap = 110;
+  const groupPositions = new Map<string, { x: number; y: number }>();
 
-    if (fromRank > toRank) {
-      [from, to] = [to, from];
-    }
-
-    const key = `${from}->${to}`;
-    if (edgeKeys.has(key)) continue;
-    edgeKeys.add(key);
-
-    const minlen = Math.max(1, Math.abs(getRank(to, nodeMap) - getRank(from, nodeMap)));
-
-    try {
-      g.setEdge(from, to, { minlen, weight: fromRank === toRank ? 0 : 2 });
-    } catch {
-      // parallel edge — skip duplicate
+  for (const group of GROUP_ORDER) {
+    const x = GROUP_COLUMN_X[group] - NODE_WIDTH / 2;
+    for (let index = 0; index < grouped[group].length; index += 1) {
+      const node = grouped[group][index];
+      groupPositions.set(node.id, {
+        x,
+        y: 60 + index * rowGap,
+      });
     }
   }
 
-  dagre.layout(g);
-
-  return activeNodes.map((node, index) => {
-    const pos = g.node(node.id);
-    const rank = GROUP_RANK[node.group] ?? 1;
-    const fallbackX = rank * 320 + 60;
-    const fallbackY = index * 110 + 60;
+  return activeNodes.map((node) => {
+    const pos = groupPositions.get(node.id);
 
     return {
       id: node.id,
       type: node.group,
       position: {
-        x: (pos?.x ?? fallbackX) - NODE_WIDTH / 2,
-        y: (pos?.y ?? fallbackY) - NODE_HEIGHT / 2,
+        x: pos?.x ?? GROUP_COLUMN_X[node.group] - NODE_WIDTH / 2,
+        y: pos?.y ?? 60,
       },
       data: {
         label: node.label,

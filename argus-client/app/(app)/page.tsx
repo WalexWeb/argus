@@ -113,7 +113,7 @@ export default async function DashboardPage() {
                 { label: 'Низкие', value: summary.alerts_by_severity.low },
               ]}
             />
-            <div className="mt-4 pt-3 border-t border-white/[0.06]">
+            <div className="mt-4 pt-3 border-t border-white/6">
               <SeverityChart data={summary.alerts_by_severity} />
             </div>
           </div>

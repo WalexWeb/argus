@@ -27,10 +27,10 @@ function AlertTableRow({ alert }: { alert: Alert }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] transition hover:border-pistachio-500/20 hover:bg-white/[0.03]">
+    <div className="rounded-xl border border-white/6 bg-white/2 transition hover:border-pistachio-500/20 hover:bg-white/3">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-5 py-4 text-left hover:bg-white/[0.01]"
+        className="w-full px-5 py-4 text-left hover:bg-white/1"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
@@ -68,7 +68,7 @@ function AlertTableRow({ alert }: { alert: Alert }) {
       </button>
 
       {isExpanded && (
-        <div className="border-t border-white/[0.03] px-5 py-4">
+        <div className="border-t border-white/3 px-5 py-4">
           {Object.keys(alert.evidence).length > 0 && (
             <div>
               <h4 className="mb-3 text-sm font-semibold text-zinc-300">Доказательства:</h4>
@@ -114,7 +114,7 @@ function AlertCard({ alert }: { alert: Alert }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5 transition hover:border-pistachio-500/25 hover:bg-white/[0.03]">
+    <div className="rounded-2xl border border-white/6 bg-white/2 p-5 transition hover:border-pistachio-500/25 hover:bg-white/3">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <div className="flex items-center gap-2">
@@ -127,17 +127,17 @@ function AlertCard({ alert }: { alert: Alert }) {
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-lg bg-white/[0.02] p-3">
+        <div className="rounded-lg bg-white/2 p-3">
           <p className="text-xs text-zinc-500">ID</p>
           <p className="mt-1 font-mono text-sm font-semibold text-zinc-200">#{alert.id}</p>
         </div>
-        <div className="rounded-lg bg-white/[0.02] p-3">
+        <div className="rounded-lg bg-white/2 p-3">
           <p className="text-xs text-zinc-500">Связанные события</p>
           <p className="mt-1 text-lg font-semibold text-pistachio-400">
             {alert.related_events.length}
           </p>
         </div>
-        <div className="rounded-lg bg-white/[0.02] p-3">
+        <div className="rounded-lg bg-white/2 p-3">
           <p className="text-xs text-zinc-500">Время срабатывания</p>
           <p className="mt-1 text-sm font-mono text-zinc-300">
             {formatDate(alert.triggered_at)}

@@ -25,7 +25,7 @@ export function BarChart({
             </span>
             <span className="ml-2 font-mono text-base text-zinc-300">{item[valueKey]}</span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-white/[0.04]">
+          <div className="h-2.5 overflow-hidden rounded-full bg-white/4">
             <div
               className={cn('h-full rounded-full transition-all duration-500', color)}
               style={{ width: `${(Number(item[valueKey]) / max) * 100}%` }}
@@ -55,7 +55,7 @@ export function TimelineChart({
             {point.count}
           </div>
           <div
-            className="w-full rounded-t-lg bg-gradient-to-t from-pistachio-600 to-pistachio-400 opacity-85 transition-all group-hover:opacity-100"
+            className="w-full rounded-t-lg bg-linear-to-t from-pistachio-600 to-pistachio-400 opacity-85 transition-all group-hover:opacity-100"
             style={{
               height: `${Math.max((point.count / max) * 100, 4)}%`,
             }}
@@ -131,10 +131,10 @@ export function SeverityChart({
   return (
     <div className="grid grid-cols-2 gap-4">
       {items.map((item) => (
-        <div key={item.label} className="rounded-2xl bg-white/[0.02] p-5">
+        <div key={item.label} className="rounded-2xl bg-white/2 p-5">
           <p className="text-sm text-zinc-500">{item.label}</p>
           <p className="mt-1 text-3xl font-bold text-zinc-100">{item.value}</p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/[0.04]">
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/4">
             <div
               className={cn('h-full rounded-full', item.color)}
               style={{ width: `${(item.value / max) * 100}%` }}

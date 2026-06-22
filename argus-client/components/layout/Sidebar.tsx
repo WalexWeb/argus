@@ -35,7 +35,7 @@ export function Sidebar() {
                 "group flex items-center gap-3 rounded-2xl px-3.5 py-3 transition-all duration-200",
                 active
                   ? "bg-pistachio-500/15 text-pistachio-300 shadow-sm shadow-pistachio-500/10"
-                  : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200",
+                  : "text-zinc-400 hover:bg-white/4 hover:text-zinc-200",
               )}
             >
               <span

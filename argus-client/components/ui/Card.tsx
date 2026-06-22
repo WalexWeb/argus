@@ -62,7 +62,7 @@ export function MetricCard({
     <div
       className={cn(
         'glass-card relative overflow-hidden p-6',
-        accent && `bg-gradient-to-br ${accents[accent]}`,
+        accent && `bg-linear-to-br ${accents[accent]}`,
       )}
     >
       <p className="text-base font-medium text-zinc-500">{label}</p>

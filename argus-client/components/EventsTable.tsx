@@ -40,10 +40,10 @@ function EventRow({
   const timestamp = showDate ? formatDate(event.timestamp) : formatTime(event.timestamp);
 
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] transition hover:border-pistachio-500/20 hover:bg-white/[0.03]">
+    <div className="rounded-xl border border-white/6 bg-white/2 transition hover:border-pistachio-500/20 hover:bg-white/3">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-5 py-4 text-left hover:bg-white/[0.01]"
+        className="w-full px-5 py-4 text-left hover:bg-white/1"
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
@@ -86,7 +86,7 @@ function EventRow({
       </button>
 
       {isExpanded && Object.keys(event.details).length > 0 && (
-        <div className="border-t border-white/[0.03] px-5 py-4">
+        <div className="border-t border-white/3 px-5 py-4">
           <h4 className="mb-3 text-sm font-semibold text-zinc-300">Детали события:</h4>
           <EventDetailsDisplay details={event.details} />
         </div>
@@ -101,7 +101,7 @@ function EventDetailsDisplay({ details }: { details: Record<string, unknown> }) 
       {Object.entries(details).map(([key, value]) => (
         <div key={key} className="border-l-2 border-pistachio-500/30 pl-3">
           <p className="text-xs font-mono uppercase text-pistachio-400/70">{key}</p>
-          <p className="mt-1 break-words text-sm text-zinc-300">
+          <p className="mt-1 wrap-break-word text-sm text-zinc-300">
             {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
           </p>
         </div>

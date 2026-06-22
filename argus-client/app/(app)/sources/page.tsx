@@ -87,7 +87,7 @@ export default async function SourcesPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
-                <tr className="border-b border-white/[0.06] text-xs uppercase tracking-wider text-zinc-500">
+                <tr className="border-b border-white/6 text-xs uppercase tracking-wider text-zinc-500">
                   <th className="pb-3 pr-4 font-medium">IP</th>
                   <th className="pb-3 pr-4 font-medium">Событий</th>
                   <th className="pb-3 pr-4 font-medium">Источники</th>
@@ -98,7 +98,7 @@ export default async function SourcesPage() {
                 {ipDetails.map((row) => (
                   <tr
                     key={row.ip}
-                    className="border-b border-white/[0.04] hover:bg-white/[0.02]"
+                    className="border-b border-white/4 hover:bg-white/2"
                   >
                     <td className="py-3.5 pr-4 font-mono text-base text-pistachio-400">
                       {row.ip}
