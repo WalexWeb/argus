@@ -13,7 +13,7 @@ export function Sidebar() {
 
   return (
     <aside className="glass-sidebar flex h-screen w-70 shrink-0 flex-col">
-      <div className="flex justify-center items-center border-b border-pistachio-500/10 px-3 pt-6">
+      <div className="flex justify-center items-center border-b border-pistachio-500/10 px-3 pt-6 pb-4">
         <Logo size={100} showText />
       </div>
 
@@ -64,7 +64,6 @@ export function Sidebar() {
 
       <div className="space-y-3 border-t border-pistachio-500/10 p-4">
         <ReloadButton />
-        <p className="text-center text-xs text-zinc-600">data/mock-logs.json</p>
       </div>
     </aside>
   );

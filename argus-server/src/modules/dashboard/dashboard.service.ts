@@ -22,8 +22,7 @@ export class DashboardService {
 
     return {
       system: 'АРГУС',
-      full_name:
-        'Автоматизированная Регистрация и Группировка Угроз и Событий',
+      full_name: 'Автоматизированная Регистрация и Группировка Угроз и Событий',
       events_total: events.length,
       alerts_total: alerts.length,
       alerts_by_severity: severityCounts,
@@ -37,11 +36,11 @@ export class DashboardService {
   }
 
   getCorrelationGraph() {
-    const events = this.eventsService.getAll();
     const alerts = this.alertsService.getAll();
 
     const nodes: { id: string; label: string; group: string }[] = [];
     const edges: { from: string; to: string; label: string }[] = [];
+
     const nodeSet = new Set<string>();
 
     const addNode = (id: string, label: string, group: string) => {
@@ -51,49 +50,170 @@ export class DashboardService {
       }
     };
 
-    for (const e of events) {
-      if (e.ip) addNode(`ip:${e.ip}`, e.ip, 'ip');
-      if (e.username) addNode(`user:${e.username}`, e.username, 'user');
-      addNode(`src:${e.source}`, e.source, 'source');
-
-      if (e.ip && e.username) {
-        edges.push({
-          from: `ip:${e.ip}`,
-          to: `user:${e.username}`,
-          label: e.event_type,
-        });
-      }
-      if (e.source && e.ip) {
-        edges.push({
-          from: `src:${e.source}`,
-          to: `ip:${e.ip}`,
-          label: e.event_type,
-        });
-      }
-    }
-
     for (const alert of alerts) {
-      addNode(`alert:${alert.id}`, alert.name, 'alert');
-      for (const eventId of alert.related_events) {
-        const event = this.eventsService.getById(eventId);
-        if (!event) continue;
-        if (event.ip) {
+      const alertId = `alert:${alert.id}`;
+
+      addNode(alertId, alert.name, 'alert');
+
+      switch (alert.rule) {
+        case 'MULTIPLE_USERS_SAME_IP': {
+          const ip = String(alert.evidence.ip ?? '');
+
+          const userCount = Number(alert.evidence.user_count ?? 0);
+
+          const usersEvidenceId = `evidence:${alert.id}:users`;
+
+          addNode(`src:active-directory`, 'active-directory', 'source');
+
+          addNode(`ip:${ip}`, ip, 'ip');
+
+          addNode(usersEvidenceId, `${userCount} users`, 'evidence');
+
           edges.push({
-            from: `alert:${alert.id}`,
-            to: `ip:${event.ip}`,
+            from: 'src:active-directory',
+            to: `ip:${ip}`,
+            label: '',
+          });
+
+          edges.push({
+            from: `ip:${ip}`,
+            to: usersEvidenceId,
+            label: '',
+          });
+
+          edges.push({
+            from: usersEvidenceId,
+            to: alertId,
             label: alert.rule,
           });
+
+          break;
         }
-        if (event.username) {
+
+        case 'EMAIL_MULTIPLE_COUNTRIES': {
+          const email = String(alert.evidence.email ?? '');
+
+          const countries = Array.isArray(alert.evidence.countries)
+            ? (alert.evidence.countries as string[])
+            : [];
+
+          const countriesEvidenceId = `evidence:${alert.id}:countries`;
+
+          addNode(`src:mail-gateway`, 'mail-gateway', 'source');
+
+          addNode(`user:${email}`, email, 'user');
+
+          addNode(countriesEvidenceId, countries.join(' → '), 'evidence');
+
           edges.push({
-            from: `alert:${alert.id}`,
-            to: `user:${event.username}`,
+            from: 'src:mail-gateway',
+            to: `user:${email}`,
+            label: '',
+          });
+
+          edges.push({
+            from: `user:${email}`,
+            to: countriesEvidenceId,
+            label: '',
+          });
+
+          edges.push({
+            from: countriesEvidenceId,
+            to: alertId,
             label: alert.rule,
           });
+
+          break;
         }
+
+        case 'ACCOUNT_COMPROMISE_CHAIN': {
+          const username = String(alert.evidence.username ?? '');
+
+          const ip = String(alert.evidence.ip ?? '');
+
+          const resource = String(
+            alert.evidence.accessed_resource ?? 'Confidential Resource',
+          );
+
+          const resourceEvidenceId = `evidence:${alert.id}:resource`;
+
+          addNode('src:active-directory', 'active-directory', 'source');
+
+          addNode(`ip:${ip}`, ip, 'ip');
+
+          addNode(`user:${username}`, username, 'user');
+
+          addNode(resourceEvidenceId, resource, 'evidence');
+
+          edges.push({
+            from: 'src:active-directory',
+            to: `ip:${ip}`,
+            label: '',
+          });
+
+          edges.push({
+            from: `ip:${ip}`,
+            to: `user:${username}`,
+            label: '',
+          });
+
+          edges.push({
+            from: `user:${username}`,
+            to: resourceEvidenceId,
+            label: '',
+          });
+
+          edges.push({
+            from: resourceEvidenceId,
+            to: alertId,
+            label: alert.rule,
+          });
+
+          break;
+        }
+
+        case 'IDS_HIGH_SEVERITY': {
+          const srcIp = String(alert.evidence.src_ip ?? '');
+
+          const signature = String(alert.evidence.signature ?? 'IDS Event');
+
+          const signatureEvidenceId = `evidence:${alert.id}:signature`;
+
+          addNode('src:ids-ips', 'ids-ips', 'source');
+
+          addNode(`ip:${srcIp}`, srcIp, 'ip');
+
+          addNode(signatureEvidenceId, signature, 'evidence');
+
+          edges.push({
+            from: 'src:ids-ips',
+            to: `ip:${srcIp}`,
+            label: '',
+          });
+
+          edges.push({
+            from: `ip:${srcIp}`,
+            to: signatureEvidenceId,
+            label: '',
+          });
+
+          edges.push({
+            from: signatureEvidenceId,
+            to: alertId,
+            label: alert.rule,
+          });
+
+          break;
+        }
+
+        default:
+          break;
       }
     }
 
-    return { nodes, edges };
+    return {
+      nodes,
+      edges,
+    };
   }
 }

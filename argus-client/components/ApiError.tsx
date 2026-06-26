@@ -7,7 +7,7 @@ export function ApiError() {
         <div className="flex justify-center">
           <Logo size={150} />
         </div>
-        <h1 className="text-2xl font-bold text-zinc-100">АРГУС недоступен</h1>
+        <h1 className="text-2xl pt-6 font-bold text-zinc-100">АРГУС недоступен</h1>
         <p className="mt-3 text-lg text-zinc-500">
           Не удалось подключиться к API.
         </p>

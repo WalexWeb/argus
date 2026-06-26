@@ -97,15 +97,42 @@ export class EventsService {
   }
 
   getTimeline(): { hour: string; count: number }[] {
-    const map = new Map<string, number>();
-    for (const e of this.events) {
-      const d = new Date(e.timestamp);
-      const hour = `${d.toISOString().slice(0, 13)}:00`;
-      map.set(hour, (map.get(hour) ?? 0) + 1);
+    if (this.events.length === 0) {
+      return [];
     }
-    return [...map.entries()]
-      .map(([hour, count]) => ({ hour, count }))
-      .sort((a, b) => a.hour.localeCompare(b.hour));
+
+    const map = new Map<string, number>();
+
+    for (const event of this.events) {
+      const date = new Date(event.timestamp);
+
+      // Используем UTC, чтобы не было сдвига часовых поясов
+      date.setUTCMinutes(0, 0, 0);
+
+      const key = date.toISOString().slice(0, 13) + ':00';
+
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+
+    const first = new Date([...map.keys()].sort()[0] + ':00.000Z');
+
+    const last = new Date([...map.keys()].sort().at(-1)! + ':00.000Z');
+
+    const result: { hour: string; count: number }[] = [];
+
+    const cursor = new Date(first);
+
+    while (cursor <= last) {
+      const key = cursor.toISOString().slice(0, 13) + ':00';
+
+      result.push({
+        hour: key,
+        count: map.get(key) ?? 0,
+      });
+
+      cursor.setUTCHours(cursor.getUTCHours() + 1);
+    }
+    return result;
   }
 
   clear(): void {

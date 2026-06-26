@@ -14,7 +14,7 @@ export function Logo({
   return (
     <div
       className={cn(
-        "grid grid-cols-1 grid-rows-2 items-center justify-center",
+        "flex flex-col items-center justify-center gap-2",
         className,
       )}
     >
@@ -26,12 +26,9 @@ export function Logo({
         className="rounded-2xl shadow-lg shadow-pistachio-600/20 ring-pistachio-500/20"
         priority
       />
+
       {showText && (
-        <div className="flex items-center justify-center">
-          <h1 className="text-xl font-bold tracking-tight text-zinc-50">
-            АРГУС
-          </h1>
-        </div>
+        <h1 className="text-xl font-bold tracking-tight text-zinc-50">АРГУС</h1>
       )}
     </div>
   );

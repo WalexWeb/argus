@@ -1,4 +1,4 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
 export interface Summary {
   system: string;
@@ -35,7 +35,7 @@ export interface Alert {
   rule: string;
   name: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   triggered_at: string;
   related_events: number[];
   evidence: Record<string, unknown>;
@@ -51,33 +51,33 @@ export interface CorrelationRule {
 }
 
 async function fetchApi<T>(path: string): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, { cache: 'no-store' });
+  const res = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
 
 export async function getSummary(): Promise<Summary> {
-  return fetchApi('/api/v1/summary');
+  return fetchApi("/api/v1/summary");
 }
 
 export async function getAlerts(): Promise<{ total: number; alerts: Alert[] }> {
-  return fetchApi('/api/v1/alerts');
+  return fetchApi("/api/v1/alerts");
 }
 
 export async function getEvents(): Promise<{
   total: number;
   events: SecurityEvent[];
 }> {
-  return fetchApi('/api/v1/events');
+  return fetchApi("/api/v1/events");
 }
 
 export async function getRules(): Promise<{ rules: CorrelationRule[] }> {
-  return fetchApi('/api/v1/rules');
+  return fetchApi("/api/v1/rules");
 }
 
 export async function reloadMockLogs(): Promise<unknown> {
   const res = await fetch(`${API_BASE}/api/v1/ingest/mock`, {
-    method: 'POST',
+    method: "POST",
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
@@ -99,5 +99,5 @@ export async function getCorrelationGraph(): Promise<{
   nodes: GraphNode[];
   edges: GraphEdge[];
 }> {
-  return fetchApi('/api/v1/correlation-graph');
+  return fetchApi("/api/v1/correlation-graph");
 }

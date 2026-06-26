@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export function BarChart({
   data,
   labelKey,
   valueKey,
-  color = 'bg-pistachio-500',
+  color = "bg-pistachio-500",
 }: {
   data: Record<string, string | number>[];
   labelKey: string;
@@ -18,17 +18,27 @@ export function BarChart({
   return (
     <div className="space-y-4">
       {data.map((item, i) => (
-        <div key={i} className="group">
-          <div className="mb-1.5 flex items-center justify-between text-sm">
-            <span className="truncate font-medium text-zinc-400 group-hover:text-zinc-300">
-              {String(item[labelKey])}
-            </span>
-            <span className="ml-2 font-mono text-base text-zinc-300">{item[valueKey]}</span>
+        <div key={i}>
+          <div className="mb-1 flex justify-between text-sm">
+            <span>{String(item[labelKey])}</span>
+            <span>{item[valueKey]}</span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full bg-white/4">
+
+          <div
+            style={{
+              width: "100%",
+              height: 10,
+              background: "#202020",
+              borderRadius: 8,
+            }}
+          >
             <div
-              className={cn('h-full rounded-full transition-all duration-500', color)}
-              style={{ width: `${(Number(item[valueKey]) / max) * 100}%` }}
+              style={{
+                width: `${(Number(item[valueKey]) / max) * 100}%`,
+                height: "100%",
+                background: "#78d64b",
+                borderRadius: 8,
+              }}
             />
           </div>
         </div>
@@ -43,28 +53,94 @@ export function TimelineChart({
   data: { hour: string; count: number }[];
 }) {
   const max = Math.max(...data.map((d) => d.count), 1);
-
+  console.table(data);
   return (
-    <div className="flex h-44 items-end gap-2">
-      {data.map((point) => (
+    <div
+      style={{
+        position: "relative",
+        height: 320,
+        width: "100%",
+        padding: "20px 12px 36px",
+      }}
+    >
+      {/* Горизонтальная сетка */}
+      {[0, 25, 50, 75, 100].map((v) => (
         <div
-          key={point.hour}
-          className="group relative flex flex-1 flex-col items-center"
-        >
-          <div className="absolute -top-7 hidden rounded-lg bg-zinc-800 px-2 py-1 text-xs text-zinc-300 group-hover:block">
-            {point.count}
-          </div>
-          <div
-            className="w-full rounded-t-lg bg-linear-to-t from-pistachio-600 to-pistachio-400 opacity-85 transition-all group-hover:opacity-100"
-            style={{
-              height: `${Math.max((point.count / max) * 100, 4)}%`,
-            }}
-          />
-          <span className="mt-2 text-xs text-zinc-600">
-            {point.hour.slice(11, 16)}
-          </span>
-        </div>
+          key={v}
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: `${36 + v * 2.5}px`,
+            borderTop: "1px solid rgba(255,255,255,.05)",
+          }}
+        />
       ))}
+
+      <div
+        style={{
+          height: "100%",
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 14,
+        }}
+      >
+        {data.map((point) => {
+          const percent =
+            point.count === 0 ? 4 : Math.max((point.count / max) * 100, 8);
+
+          return (
+            <div
+              key={point.hour}
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                height: "100%",
+              }}
+            >
+              <div
+                style={{
+                  marginBottom: 10,
+                  fontSize: 12,
+                  color: "#b4b4b4",
+                  fontWeight: 600,
+                }}
+              >
+                {point.count}
+              </div>
+
+              <div
+                style={{
+                  width: "70%",
+                  height: `${percent}%`,
+                  borderRadius: "12px 12px 4px 4px",
+                  background: "linear-gradient(to top,#4b8f2f,#78d64b,#b8ff7a)",
+                  boxShadow:
+                    "0 0 18px rgba(132,204,22,.35), inset 0 1px rgba(255,255,255,.2)",
+                  transition: ".35s",
+                }}
+              />
+
+              <div
+                style={{
+                  marginTop: 12,
+                  color: "#8a8a8a",
+                  fontSize: 12,
+                }}
+              >
+                {new Date(point.hour).toLocaleTimeString("ru-RU", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "UTC",
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -79,38 +155,62 @@ export function DonutChart({
   valueKey: string;
 }) {
   const total = data.reduce((s, d) => s + Number(d[valueKey]), 0);
+
   const colors = [
-    'bg-pistachio-500',
-    'bg-pistachio-400',
-    'bg-pistachio-600',
-    'bg-emerald-500',
-    'bg-lime-500',
-    'bg-teal-500',
+    "#84cc16",
+    "#a3e635",
+    "#65a30d",
+    "#10b981",
+    "#14b8a6",
+    "#06b6d4",
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex h-3.5 overflow-hidden rounded-full">
+    <div>
+      <div
+        style={{
+          display: "flex",
+          height: 14,
+          borderRadius: 10,
+          overflow: "hidden",
+          marginBottom: 20,
+        }}
+      >
         {data.map((item, i) => (
           <div
             key={i}
-            className={cn(colors[i % colors.length], 'transition-all')}
             style={{
               width: `${(Number(item[valueKey]) / total) * 100}%`,
+              background: colors[i % colors.length],
             }}
-            title={`${item[labelKey]}: ${item[valueKey]}`}
           />
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        {data.map((item, i) => (
-          <div key={i} className="flex items-center gap-2 text-sm">
-            <span className={cn('h-2.5 w-2.5 rounded-full', colors[i % colors.length])} />
-            <span className="truncate text-zinc-400">{String(item[labelKey])}</span>
-            <span className="ml-auto font-mono text-zinc-300">{item[valueKey]}</span>
-          </div>
-        ))}
-      </div>
+
+      {data.map((item, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginBottom: 8,
+          }}
+        >
+          <div
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              background: colors[i % colors.length],
+              marginRight: 8,
+            }}
+          />
+
+          <span>{String(item[labelKey])}</span>
+
+          <span style={{ marginLeft: "auto" }}>{item[valueKey]}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -118,26 +218,45 @@ export function DonutChart({
 export function SeverityChart({
   data,
 }: {
-  data: { critical: number; high: number; medium: number; low: number };
+  data: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+  };
 }) {
   const items = [
-    { label: 'Критический', value: data.critical, color: 'bg-red-500' },
-    { label: 'Высокий', value: data.high, color: 'bg-orange-500' },
-    { label: 'Средний', value: data.medium, color: 'bg-amber-500' },
-    { label: 'Низкий', value: data.low, color: 'bg-sky-500' },
+    { label: "Критический", value: data.critical, color: "#ef4444" },
+    { label: "Высокий", value: data.high, color: "#f97316" },
+    { label: "Средний", value: data.medium, color: "#f59e0b" },
+    { label: "Низкий", value: data.low, color: "#0ea5e9" },
   ];
+
   const max = Math.max(...items.map((i) => i.value), 1);
 
   return (
     <div className="grid grid-cols-2 gap-4">
       {items.map((item) => (
-        <div key={item.label} className="rounded-2xl bg-white/2 p-5">
-          <p className="text-sm text-zinc-500">{item.label}</p>
-          <p className="mt-1 text-3xl font-bold text-zinc-100">{item.value}</p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/4">
+        <div key={item.label}>
+          <div>{item.label}</div>
+
+          <div style={{ fontSize: 28 }}>{item.value}</div>
+
+          <div
+            style={{
+              height: 8,
+              background: "#222",
+              borderRadius: 8,
+              marginTop: 8,
+            }}
+          >
             <div
-              className={cn('h-full rounded-full', item.color)}
-              style={{ width: `${(item.value / max) * 100}%` }}
+              style={{
+                width: `${(item.value / max) * 100}%`,
+                height: "100%",
+                background: item.color,
+                borderRadius: 8,
+              }}
             />
           </div>
         </div>
