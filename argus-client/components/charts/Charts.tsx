@@ -158,59 +158,139 @@ export function DonutChart({
 
   const colors = [
     "#84cc16",
-    "#a3e635",
-    "#65a30d",
-    "#10b981",
-    "#14b8a6",
     "#06b6d4",
+    "#3b82f6",
+    "#8b5cf6",
+    "#f59e0b",
+    "#ef4444",
+    "#10b981",
+    "#ec4899",
+    "#14b8a6",
+    "#64748b",
   ];
 
+  const sorted = [...data].sort(
+    (a, b) => Number(b[valueKey]) - Number(a[valueKey]),
+  );
+
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
+      {/* Верхняя цветная шкала */}
       <div
         style={{
           display: "flex",
-          height: 14,
-          borderRadius: 10,
           overflow: "hidden",
-          marginBottom: 20,
+          height: 10,
+          borderRadius: 999,
+          background: "#1b1b1b",
+          marginBottom: 22,
         }}
       >
-        {data.map((item, i) => (
+        {sorted.map((item, i) => (
           <div
             key={i}
             style={{
               width: `${(Number(item[valueKey]) / total) * 100}%`,
               background: colors[i % colors.length],
+              transition: ".3s",
             }}
           />
         ))}
       </div>
 
-      {data.map((item, i) => (
-        <div
-          key={i}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: 8,
-          }}
-        >
+      {/* Список */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+        }}
+      >
+        {sorted.slice(0, 6).map((item, i) => {
+          const value = Number(item[valueKey]);
+          const percent = (value / total) * 100;
+
+          return (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: 999,
+                  background: colors[i % colors.length],
+                  flexShrink: 0,
+                }}
+              />
+
+              <div
+                style={{
+                  flex: 1,
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    color: "#f5f5f5",
+                    fontWeight: 600,
+                    fontSize: 14,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {String(item[labelKey])}
+                </div>
+
+                <div
+                  style={{
+                    marginTop: 2,
+                    color: "#71717a",
+                    fontSize: 12,
+                  }}
+                >
+                  {percent.toFixed(1)}%
+                </div>
+              </div>
+
+              <div
+                style={{
+                  color: "#fafafa",
+                  fontWeight: 700,
+                  fontSize: 18,
+                  minWidth: 28,
+                  textAlign: "right",
+                }}
+              >
+                {value}
+              </div>
+            </div>
+          );
+        })}
+
+        {sorted.length > 6 && (
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              background: colors[i % colors.length],
-              marginRight: 8,
+              marginTop: 4,
+              color: "#71717a",
+              fontSize: 12,
+              textAlign: "center",
             }}
-          />
-
-          <span>{String(item[labelKey])}</span>
-
-          <span style={{ marginLeft: "auto" }}>{item[valueKey]}</span>
-        </div>
-      ))}
+          ></div>
+        )}
+      </div>
     </div>
   );
 }
