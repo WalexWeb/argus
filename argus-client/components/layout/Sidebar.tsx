@@ -12,11 +12,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="glass-sidebar flex h-screen w-70 shrink-0 flex-col">
+    <aside className="glass-sidebar sticky top-0 h-screen w-70 shrink-0 flex flex-col">
       <div className="flex justify-center items-center border-b border-pistachio-500/10 px-3 pt-6 pb-4">
         <Logo size={100} showText />
       </div>
-
       <nav className="flex-1 space-y-1 px-3 py-5">
         <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-widest text-zinc-600">
           Аналитика
@@ -61,7 +60,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-
       <div className="space-y-3 border-t border-pistachio-500/10 p-4">
         <ReloadButton />
       </div>

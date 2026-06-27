@@ -21,9 +21,7 @@ interface StoredEvent extends NormalizedEvent {
 }
 
 function computeHash(event: Omit<NormalizedEvent, 'hash'>): string {
-  return createHash('sha256')
-    .update(JSON.stringify(event))
-    .digest('hex');
+  return createHash('sha256').update(JSON.stringify(event)).digest('hex');
 }
 
 function parseJsonLog(
@@ -42,8 +40,7 @@ function parseJsonLog(
       : typeof data.src_ip === 'string'
         ? data.src_ip
         : null;
-  const username =
-    typeof data.username === 'string' ? data.username : null;
+  const username = typeof data.username === 'string' ? data.username : null;
   const partial = {
     source,
     event_type,
@@ -104,12 +101,6 @@ function main() {
       events.push({ ...normalized, id: id++ });
     }
   }
-
-  console.log('\n╔══════════════════════════════════════════════════╗');
-  console.log('║  АРГУС — Анализ моковых логов                   ║');
-  console.log('╚══════════════════════════════════════════════════╝\n');
-  console.log(`Загружено событий: ${events.length}`);
-  console.log(`Правил корреляции: ${rulesFile.length}\n`);
 
   const alerts: {
     severity: string;
@@ -174,8 +165,7 @@ function main() {
         .filter((e) => e.username === 'admin')
         .sort(
           (a, b) =>
-            new Date(a.timestamp).getTime() -
-            new Date(b.timestamp).getTime(),
+            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
         );
       const failed = adminEvents.filter((e) => e.event_type === 'login_failed');
       const success = adminEvents.find((e) => e.event_type === 'login_success');
@@ -216,16 +206,11 @@ function main() {
     }
   }
 
-  console.log('─── Обнаруженные алерты ───\n');
   for (const alert of alerts) {
     console.log(
       `[${alert.severity.toUpperCase()}] ${alert.name} (${alert.rule})`,
     );
-    console.log(`  ${alert.description}`);
-    console.log(`  Доказательства: ${JSON.stringify(alert.evidence)}\n`);
   }
-
-  console.log(`Итого алертов: ${alerts.length}`);
 }
 
 main();
