@@ -1,20 +1,23 @@
-import { getEvents } from '@/lib/api';
-import { ApiError } from '@/components/ApiError';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { EventsExplorer } from '@/components/EventsExplorer';
-import { Card, CardHeader } from '@/components/ui/Card';
-import { DataListCards, CompactDataList } from '@/components/DataListCards';
-import { DonutChart } from '@/components/charts/Charts';
+import { getEvents, getSummary } from "@/lib/api";
+import { ApiError } from "@/components/ApiError";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EventsExplorer } from "@/components/EventsExplorer";
+import { Card, CardHeader } from "@/components/ui/Card";
+import { CompactDataList } from "@/components/DataListCards";
+import { DonutChart, TimelineChart } from "@/components/charts/Charts";
+import { MetricsGrid } from "@/components/MetricsGrid"; // новый импорт
 
 export default async function EventsPage() {
   let data;
+  let summary;
 
   try {
-    data = await getEvents();
+    [data, summary] = await Promise.all([getEvents(), getSummary()]);
   } catch {
     return <ApiError />;
   }
 
+  // Вычисления для статистики
   const bySource = Object.entries(
     data.events.reduce(
       (acc, e) => {
@@ -38,13 +41,6 @@ export default async function EventsPage() {
   )
     .map(([event_type, count]) => ({ event_type, count }))
     .sort((a, b) => b.count - a.count);
-
-  const totalSourceCount = bySource.reduce((sum, s) => sum + s.count, 0);
-  const sourcesWithPercentage = bySource.map((s) => ({
-    label: s.source,
-    value: s.count,
-    percentage: (s.count / totalSourceCount) * 100,
-  }));
 
   const topIPs = Object.entries(
     data.events.reduce(
@@ -83,69 +79,58 @@ export default async function EventsPage() {
         description="Полный журнал нормализованных событий с поиском и фильтрацией"
       />
 
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card padding>
-          <div>
-            <p className="text-xs text-zinc-500 uppercase font-semibold">Всего записей</p>
-            <p className="mt-2 text-3xl font-bold text-pistachio-400">{data.total}</p>
-          </div>
+      {/* Метрики с выбором */}
+      <MetricsGrid
+        metrics={[
+          {
+            id: "total",
+            label: "Всего записей",
+            value: data.total,
+            accent: "pistachio",
+          },
+          {
+            id: "sources",
+            label: "Источников",
+            value: bySource.length,
+            accent: "emerald",
+          },
+          {
+            id: "types",
+            label: "Типов событий",
+            value: byType.length,
+            accent: "amber",
+          },
+          {
+            id: "ips",
+            label: "Уникальных IP",
+            value: topIPs.length,
+            accent: "rose",
+          },
+        ]}
+      />
+
+      {/* Графики */}
+      <section className="mb-8 grid gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader
+            title="Таймлайн событий"
+            subtitle="Распределение по времени за период"
+          />
+          <TimelineChart data={summary.timeline} />
         </Card>
-        <Card padding>
-          <div>
-            <p className="text-xs text-zinc-500 uppercase font-semibold">Источников</p>
-            <p className="mt-2 text-3xl font-bold text-emerald-400">{bySource.length}</p>
-          </div>
-        </Card>
-        <Card padding>
-          <div>
-            <p className="text-xs text-zinc-500 uppercase font-semibold">Типов событий</p>
-            <p className="mt-2 text-3xl font-bold text-amber-400">{byType.length}</p>
-          </div>
-        </Card>
-        <Card padding>
-          <div>
-            <p className="text-xs text-zinc-500 uppercase font-semibold">Уникальных IP</p>
-            <p className="mt-2 text-3xl font-bold text-rose-400">{topIPs.length}</p>
-          </div>
+
+        <Card>
+          <CardHeader title="По типам" subtitle="Классификация событий" />
+          <DonutChart
+            data={summary.events_by_type}
+            labelKey="event_type"
+            valueKey="count"
+          />
         </Card>
       </section>
 
+      {/* Активные пользователи */}
       <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader
-            title="По источникам"
-            subtitle={`${bySource.length} активных источников`}
-          />
-          <DataListCards
-            title="Источники"
-            data={sourcesWithPercentage}
-          />
-        </Card>
-
-        <Card>
-          <CardHeader title="По типам событий" />
-          <DonutChart data={byType} labelKey="event_type" valueKey="count" />
-        </Card>
-      </section>
-
-      <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader
-            title="Топ IP адреса"
-            subtitle={`${topIPs.length} наиболее активных`}
-          />
-          {topIPs.length > 0 ? (
-            <CompactDataList
-              items={topIPs.map((ip) => ({
-                label: ip.ip,
-                value: ip.count,
-              }))}
-            />
-          ) : (
-            <p className="text-sm text-zinc-500">Данные отсутствуют</p>
-          )}
-        </Card>
-
         <Card>
           <CardHeader
             title="Активные пользователи"
@@ -164,6 +149,7 @@ export default async function EventsPage() {
         </Card>
       </section>
 
+      {/* Таблица событий */}
       <section>
         <EventsExplorer events={data.events} />
       </section>

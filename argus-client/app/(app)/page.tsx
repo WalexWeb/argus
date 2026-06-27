@@ -1,17 +1,11 @@
-import { getSummary, getAlerts } from '@/lib/api';
-import { ApiError } from '@/components/ApiError';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { MetricCard, Card, CardHeader } from '@/components/ui/Card';
-import { AlertCards } from '@/components/AlertsList';
-import { EventsTable } from '@/components/EventsTable';
-import { DataListCards, CompactDataList } from '@/components/DataListCards';
-import {
-  BarChart,
-  TimelineChart,
-  SeverityChart,
-  DonutChart,
-} from '@/components/charts/Charts';
-import Link from 'next/link';
+import { getSummary, getAlerts } from "@/lib/api";
+import { ApiError } from "@/components/ApiError";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Card, CardHeader } from "@/components/ui/Card";
+import { AlertCards } from "@/components/AlertsList";
+import { EventsTable } from "@/components/EventsTable";
+import { MetricsGrid } from "@/components/MetricsGrid";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   let summary;
@@ -23,19 +17,20 @@ export default async function DashboardPage() {
     return <ApiError />;
   }
 
-  const totalSources = summary.top_sources.reduce((sum, s) => sum + s.count, 0);
-  const sourcesWithPercentage = summary.top_sources.map((s) => ({
-    label: s.source,
-    value: s.count,
-    percentage: (s.count / totalSources) * 100,
-  }));
+  // Эти вычисления пока не используются, но оставляем на будущее
+  // const totalSources = summary.top_sources.reduce((sum, s) => sum + s.count, 0);
+  // const sourcesWithPercentage = summary.top_sources.map((s) => ({
+  //   label: s.source,
+  //   value: s.count,
+  //   percentage: (s.count / totalSources) * 100,
+  // }));
 
-  const totalIPs = summary.top_ips.reduce((sum, ip) => sum + ip.count, 0);
-  const ipsWithPercentage = summary.top_ips.slice(0, 5).map((ip) => ({
-    label: ip.ip,
-    value: ip.count,
-    percentage: (ip.count / totalIPs) * 100,
-  }));
+  // const totalIPs = summary.top_ips.reduce((sum, ip) => sum + ip.count, 0);
+  // const ipsWithPercentage = summary.top_ips.slice(0, 5).map((ip) => ({
+  //   label: ip.ip,
+  //   value: ip.count,
+  //   percentage: (ip.count / totalIPs) * 100,
+  // }));
 
   return (
     <>
@@ -44,33 +39,40 @@ export default async function DashboardPage() {
         description="Сводка событий, алертов и активности за текущий период"
       />
 
-      <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          label="События"
-          value={summary.events_total}
-          hint="нормализованных записей"
-          accent="pistachio"
-        />
-        <MetricCard
-          label="Алерты"
-          value={summary.alerts_total}
-          hint="срабатываний правил"
-          accent="rose"
-        />
-        <MetricCard
-          label="Критические"
-          value={summary.alerts_by_severity.critical}
-          hint="требуют немедленной реакции"
-          accent="amber"
-        />
-        <MetricCard
-          label="Источников"
-          value={summary.top_sources.length}
-          hint="активных систем"
-          accent="emerald"
-        />
-      </section>
+      <MetricsGrid
+        metrics={[
+          {
+            id: "events",
+            label: "События",
+            value: summary.events_total,
+            hint: "нормализованных записей",
+            accent: "pistachio",
+          },
+          {
+            id: "alerts",
+            label: "Алерты",
+            value: summary.alerts_total,
+            hint: "срабатываний правил",
+            accent: "rose",
+          },
+          {
+            id: "critical",
+            label: "Критические",
+            value: summary.alerts_by_severity.critical,
+            hint: "требуют немедленной реакции",
+            accent: "amber",
+          },
+          {
+            id: "sources",
+            label: "Источников",
+            value: summary.top_sources.length,
+            hint: "активных систем",
+            accent: "emerald",
+          },
+        ]}
+      />
 
+      {/*
       <section className="mb-8 grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader
@@ -79,7 +81,6 @@ export default async function DashboardPage() {
           />
           <TimelineChart data={summary.timeline} />
         </Card>
-
         <Card>
           <CardHeader title="По типам" subtitle="Классификация событий" />
           <DonutChart
@@ -89,49 +90,9 @@ export default async function DashboardPage() {
           />
         </Card>
       </section>
+      */}
 
-      <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader
-            title="Источники событий"
-            subtitle={`${summary.top_sources.length} активных источников`}
-          />
-          <DataListCards
-            title="Источники"
-            data={sourcesWithPercentage}
-          />
-        </Card>
-
-        <Card>
-          <CardHeader title="Распределение алертов по критичности" />
-          <div className="space-y-3">
-            <CompactDataList
-              items={[
-                { label: 'Критические', value: summary.alerts_by_severity.critical },
-                { label: 'Высокие', value: summary.alerts_by_severity.high },
-                { label: 'Средние', value: summary.alerts_by_severity.medium },
-                { label: 'Низкие', value: summary.alerts_by_severity.low },
-              ]}
-            />
-            <div className="mt-4 pt-3 border-t border-white/6">
-              <SeverityChart data={summary.alerts_by_severity} />
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      <section className="mb-8 grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader
-            title="Топ IP адреса"
-            subtitle={`${summary.top_ips.length} уникальных адресов`}
-          />
-          <DataListCards
-            title="IP адреса"
-            data={ipsWithPercentage}
-          />
-        </Card>
-
+      <section className="grid gap-6">
         <Card>
           <CardHeader
             title="Последние алерты"

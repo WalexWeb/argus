@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-
 export function BarChart({
   data,
   labelKey,
@@ -104,7 +102,7 @@ export function TimelineChart({
               <div
                 style={{
                   marginBottom: 10,
-                  fontSize: 12,
+                  fontSize: 16,
                   color: "#b4b4b4",
                   fontWeight: 600,
                 }}
@@ -128,7 +126,7 @@ export function TimelineChart({
                 style={{
                   marginTop: 12,
                   color: "#8a8a8a",
-                  fontSize: 12,
+                  fontSize: 14,
                 }}
               >
                 {new Date(point.hour).toLocaleTimeString("ru-RU", {
