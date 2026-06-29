@@ -23,8 +23,7 @@ export class AlertsService {
   getAll(): Alert[] {
     return [...this.alerts].sort(
       (a, b) =>
-        new Date(b.triggered_at).getTime() -
-        new Date(a.triggered_at).getTime(),
+        new Date(b.triggered_at).getTime() - new Date(a.triggered_at).getTime(),
     );
   }
 
@@ -95,6 +94,10 @@ export class CorrelationService {
     return newAlerts;
   }
 
+  finalizePipelineStats(): void {
+    this.eventsService.setAlertsCreated(this.alertsService.count());
+  }
+
   private evaluateRule(
     rule: CorrelationRule,
     events: StoredEvent[],
@@ -102,12 +105,43 @@ export class CorrelationService {
     switch (rule.rule) {
       case 'MULTIPLE_USERS_SAME_IP':
         return this.checkMultipleUsersSameIp(events);
+
       case 'EMAIL_MULTIPLE_COUNTRIES':
         return this.checkEmailMultipleCountries(events);
+
       case 'ACCOUNT_COMPROMISE_CHAIN':
         return this.checkAccountCompromiseChain(events);
+
       case 'IDS_HIGH_SEVERITY':
         return this.checkIdsHighSeverity(events);
+
+      case 'VPN_TLS_FAILURE':
+        return this.checkVpnTlsFailure(events);
+
+      case 'USB_DEVICE_CONNECTED':
+        return this.checkUsbInsertion(events);
+
+      case 'MULTIPLE_HTTP_401':
+        return this.checkMultipleHttp401(events);
+
+      case 'POSTGRESQL_SCAN':
+        return this.checkPostgresqlScan(events);
+
+      case 'FAILED_EMAIL_DELIVERY':
+        return this.checkFailedEmailDelivery(events);
+
+      case 'CONFIDENTIAL_FILE_ACCESS':
+        return this.checkConfidentialFileAccess(events);
+
+      case 'OFF_HOURS_LOGIN':
+        return this.checkOffHoursLogin(events);
+
+      case 'SUSPICIOUS_USER_AGENT':
+        return this.checkSuspiciousUserAgent(events);
+
+      case "POWERSHELL_EXECUTION":
+        return this.checkPowerShellExecution(events);
+
       default:
         return [];
     }
@@ -142,7 +176,7 @@ export class CorrelationService {
       for (let end = 0; end < sorted.length; end++) {
         while (
           new Date(sorted[end].timestamp).getTime() -
-            new Date(sorted[start].timestamp).getTime() >
+          new Date(sorted[start].timestamp).getTime() >
           windowMs
         ) {
           start++;
@@ -175,10 +209,7 @@ export class CorrelationService {
     events: StoredEvent[],
   ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
     const emailEvents = events.filter(
-      (e) =>
-        e.event_type === 'email_access' &&
-        e.username &&
-        e.details.country,
+      (e) => e.event_type === 'email_access' && e.username && e.details.country,
     );
 
     const byEmail = new Map<string, StoredEvent[]>();
@@ -242,8 +273,7 @@ export class CorrelationService {
         const windowEvents = sorted.filter((e) => {
           const ts = new Date(e.timestamp).getTime();
           return (
-            ts >= chainStart.getTime() &&
-            ts <= chainStart.getTime() + windowMs
+            ts >= chainStart.getTime() && ts <= chainStart.getTime() + windowMs
           );
         });
 
@@ -264,7 +294,7 @@ export class CorrelationService {
           successLogin &&
           confidentialAccess &&
           new Date(successLogin.timestamp) >
-            new Date(failedLogins[failedLogins.length - 1].timestamp)
+          new Date(failedLogins[failedLogins.length - 1].timestamp)
         ) {
           const chainIds = [
             ...failedLogins.map((e) => e.id),
@@ -295,8 +325,7 @@ export class CorrelationService {
   ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
     const matches = events.filter(
       (e) =>
-        e.event_type === 'intrusion_detected' &&
-        e.details.severity === 'high',
+        e.event_type === 'intrusion_detected' && e.details.severity === 'high',
     );
 
     return matches.map((e) => ({
@@ -308,5 +337,203 @@ export class CorrelationService {
         severity: e.details.severity,
       },
     }));
+  }
+  private checkPostgresqlScan(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter(
+      (e) =>
+        e.event_type === 'intrusion_detected' &&
+        String(e.details.signature).includes('PostgreSQL'),
+    );
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        src_ip: e.ip,
+        dst_ip: e.details.dst_ip,
+        signature: e.details.signature,
+        port: e.details.port,
+      },
+    }));
+  }
+
+  private checkVpnTlsFailure(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter(
+      (e) =>
+        e.source === 'vpn' ||
+        JSON.stringify(e.details).includes('TLS Error'),
+    );
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        source: e.source,
+        message: e.details.message ?? 'TLS negotiation failed',
+      },
+    }));
+  }
+
+  private checkUsbInsertion(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter(
+      (e) => e.event_type === 'usb_insert',
+    );
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        workstation: e.details.workstation,
+        user: e.username,
+        device: e.details.device,
+      },
+    }));
+  }
+
+  private checkMultipleHttp401(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const requests = events.filter(
+      (e) =>
+        e.event_type === 'http_request' &&
+        e.details.status === 401 &&
+        e.ip,
+    );
+
+    const byIp = new Map<string, StoredEvent[]>();
+
+    for (const e of requests) {
+      const list = byIp.get(e.ip!) ?? [];
+      list.push(e);
+      byIp.set(e.ip!, list);
+    }
+
+    const results: {
+      eventIds: number[];
+      evidence: Record<string, unknown>;
+    }[] = [];
+
+    for (const [ip, list] of byIp) {
+      if (list.length >= 5) {
+        results.push({
+          eventIds: list.map((e) => e.id),
+          evidence: {
+            ip,
+            failed_requests: list.length,
+            path: '/login',
+          },
+        });
+      }
+    }
+
+    return results;
+  }
+
+  private checkFailedEmailDelivery(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter(
+      (e) =>
+        e.source === 'mail-gateway' &&
+        JSON.stringify(e.details).includes('reject'),
+    );
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        source: e.source,
+        reason: 'SMTP reject',
+      },
+    }));
+  }
+
+  private checkConfidentialFileAccess(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter(
+      (e) =>
+        e.event_type === 'file_access' &&
+        e.details.classification === 'confidential',
+    );
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        username: e.username,
+        ip: e.ip,
+        resource: e.details.resource,
+        action: e.details.action,
+      },
+    }));
+  }
+
+  private checkOffHoursLogin(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const matches = events.filter((e) => {
+      if (e.event_type !== 'login_success') return false;
+
+      const hour = new Date(e.timestamp).getHours();
+
+      return hour < 8 || hour >= 20;
+    });
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        username: e.username,
+        ip: e.ip,
+        login_time: e.timestamp,
+      },
+    }));
+  }
+
+  private checkSuspiciousUserAgent(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    const suspicious = [
+      'curl',
+      'python',
+      'sqlmap',
+      'nikto',
+      'masscan',
+      'nmap',
+      'wget',
+    ];
+
+    const matches = events.filter((e) => {
+      if (e.event_type !== 'http_request') return false;
+
+      const ua = String(e.details.user_agent ?? '').toLowerCase();
+
+      return suspicious.some((s) => ua.includes(s));
+    });
+
+    return matches.map((e) => ({
+      eventIds: [e.id],
+      evidence: {
+        ip: e.ip,
+        user_agent: e.details.user_agent,
+        path: e.details.path,
+      },
+    }));
+  }
+
+  private checkPowerShellExecution(
+    events: StoredEvent[],
+  ): { eventIds: number[]; evidence: Record<string, unknown> }[] {
+    return events
+      .filter((e) => e.event_type === 'powershell_execution')
+      .map((e) => ({
+        eventIds: [e.id],
+        evidence: {
+          username: e.username,
+          command: e.details.command,
+          host: e.details.hostname,
+        },
+      }));
   }
 }

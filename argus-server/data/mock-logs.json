@@ -398,6 +398,130 @@
       "format": "csv",
       "source": "internal-audit",
       "data": "2026-06-21T11:00:00.000Z,usb_insert,workstation-42,employee@company.com,USB device SanDisk 32GB connected"
+    },
+    {
+      "format": "json",
+      "source": "windows-security",
+      "data": {
+        "timestamp": "2026-06-21T11:02:00.000Z",
+        "event_type": "powershell_execution",
+        "username": "user15",
+        "hostname": "WS-014",
+        "command": "powershell.exe -EncodedCommand SQBmACgA...",
+        "severity": "high"
+      }
+    },
+    {
+      "format": "json",
+      "source": "active-directory",
+      "data": {
+        "timestamp": "2026-06-21T11:05:00.000Z",
+        "event_type": "user_added_to_admin_group",
+        "username": "backup_admin",
+        "performed_by": "admin",
+        "group": "Domain Admins",
+        "severity": "critical"
+      }
+    },
+    {
+      "format": "json",
+      "source": "file-server",
+      "data": {
+        "timestamp": "2026-06-21T11:10:00.000Z",
+        "event_type": "file_delete",
+        "username": "user09",
+        "directory": "/shared/docs/",
+        "files_deleted": 356,
+        "severity": "high"
+      }
+    },
+    {
+      "format": "json",
+      "source": "endpoint-security",
+      "data": {
+        "timestamp": "2026-06-21T11:15:00.000Z",
+        "event_type": "usb_remove",
+        "username": "employee@company.com",
+        "device": "SanDisk 32GB",
+        "hostname": "WS-042"
+      }
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:16:30.000Z",
+        "event_type": "http_request",
+        "method": "POST",
+        "path": "/login",
+        "status": 401,
+        "ip": "203.0.113.88",
+        "user_agent": "Mozilla/5.0"
+      }
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:16:40.000Z",
+        "event_type": "http_request",
+        "method": "POST",
+        "path": "/login",
+        "status": 401,
+        "ip": "203.0.113.88",
+        "user_agent": "Mozilla/5.0"
+      }
+    },
+    {
+      "format": "json",
+      "source": "nginx",
+      "data": {
+        "timestamp": "2026-06-21T10:16:50.000Z",
+        "event_type": "http_request",
+        "method": "POST",
+        "path": "/login",
+        "status": 401,
+        "ip": "203.0.113.88",
+        "user_agent": "Mozilla/5.0"
+      }
+    },
+    {
+      "format": "syslog",
+      "raw": "<134>Jun 21 10:45:10 vpn01 openvpn[3312]: TLS Error: TLS key negotiation failed"
+    },
+    {
+      "format": "syslog",
+      "raw": "<134>Jun 21 10:45:20 vpn01 openvpn[3312]: TLS Error: TLS key negotiation failed"
+    },
+    {
+      "format": "syslog",
+      "raw": "<134>Jun 21 10:45:30 vpn01 openvpn[3312]: TLS Error: TLS key negotiation failed"
+    },
+    {
+      "format": "json",
+      "source": "file-server",
+      "data": {
+        "timestamp": "2026-06-21T10:37:20.000Z",
+        "event_type": "file_access",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "resource": "/confidential/hr.xlsx",
+        "action": "read",
+        "classification": "confidential"
+      }
+    },
+    {
+      "format": "json",
+      "source": "file-server",
+      "data": {
+        "timestamp": "2026-06-21T10:37:40.000Z",
+        "event_type": "file_access",
+        "username": "admin",
+        "ip": "203.0.113.55",
+        "resource": "/confidential/payroll.xlsx",
+        "action": "read",
+        "classification": "confidential"
+      }
     }
   ]
 }

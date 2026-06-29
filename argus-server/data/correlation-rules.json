@@ -30,5 +30,130 @@
     "condition": "event_type = intrusion_detected AND severity = high",
     "severity": "high",
     "action": "create_alert"
+  },
+
+  {
+    "rule": "REPEATED_FAILED_LOGIN",
+    "name": "Множественные неудачные попытки входа",
+    "description": "Для одной учётной записи зафиксировано не менее пяти неудачных попыток входа подряд",
+    "condition": "failed_logins >= 5 within 10m group by username",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "IMPOSSIBLE_TRAVEL",
+    "name": "Невозможное перемещение пользователя",
+    "description": "Успешные входы одного пользователя выполнены из разных стран за короткий промежуток времени",
+    "condition": "login_success from different countries within 30m",
+    "severity": "high",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "CONFIDENTIAL_FILE_ACCESS",
+    "name": "Доступ к конфиденциальному файлу",
+    "description": "Получен доступ к ресурсу с уровнем Confidential",
+    "condition": "file_access classification = confidential",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "MULTIPLE_CONFIDENTIAL_FILES",
+    "name": "Массовый доступ к конфиденциальным данным",
+    "description": "Пользователь получил доступ к нескольким конфиденциальным файлам за короткий промежуток времени",
+    "condition": "count(confidential file_access) >= 5 within 15m group by username",
+    "severity": "high",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "POSTGRES_SCAN",
+    "name": "Попытка доступа к PostgreSQL",
+    "description": "IDS обнаружила подозрительное подключение к PostgreSQL",
+    "condition": "signature contains PostgreSQL",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "VPN_TLS_FAILURES",
+    "name": "Ошибки установления VPN-соединения",
+    "description": "Зафиксированы повторные ошибки TLS при подключении VPN",
+    "condition": "TLS negotiation failures >= 3 within 10m",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "HTTP_BRUTEFORCE",
+    "name": "Подбор пароля через веб-интерфейс",
+    "description": "Множественные HTTP-запросы к странице авторизации с кодом 401",
+    "condition": "POST /login status=401 >= 5 within 10m group by ip",
+    "severity": "high",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "HTTP_SERVER_ERRORS",
+    "name": "Рост количества ошибок веб-сервера",
+    "description": "Зафиксировано большое количество HTTP-ошибок уровня 5xx",
+    "condition": "status >= 500 count >= 10 within 5m",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "USB_DEVICE_CONNECTED",
+    "name": "Подключение внешнего USB-носителя",
+    "description": "Зафиксировано подключение внешнего USB-устройства",
+    "condition": "event_type = usb_insert",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "PHISHING_EMAIL_REJECTED",
+    "name": "Обнаружено подозрительное почтовое сообщение",
+    "description": "Почтовый шлюз отклонил потенциально вредоносное письмо",
+    "condition": "smtp reject OR phishing domain detected",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "SUSPICIOUS_USER_ACTIVITY",
+    "name": "Подозрительная активность пользователя",
+    "description": "Пользователь выполнил вход, после чего сразу обратился к критическим ресурсам",
+    "condition": "login_success then privileged_action within 5m",
+    "severity": "high",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "RECONNAISSANCE_ACTIVITY",
+    "name": "Признаки разведки инфраструктуры",
+    "description": "Источник выполнил последовательность сетевых сканирований различных сервисов",
+    "condition": "multiple intrusion_detected with scan signatures within 15m",
+    "severity": "high",
+    "action": "create_alert"
+  },
+
+  {
+    "rule": "ANOMALOUS_NETWORK_ACTIVITY",
+    "name": "Аномальная сетевая активность",
+    "description": "Обнаружено превышение количества событий от одного IP-адреса",
+    "condition": "events > 100 within 5m group by ip",
+    "severity": "medium",
+    "action": "create_alert"
+  },
+  {
+    "rule": "POWERSHELL_EXECUTION",
+    "name": "Выполнение PowerShell",
+    "description": "Обнаружен запуск PowerShell",
+    "condition": "event_type = powershell_execution",
+    "severity": "high",
+    "action": "create_alert"
   }
 ]

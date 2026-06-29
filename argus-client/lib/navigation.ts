@@ -20,13 +20,13 @@ export const NAV_ITEMS = [
   {
     href: '/correlation',
     label: 'Корреляция',
-    description: 'Правила и связи',
+    description: 'Расследование инцидентов',
     icon: 'correlation',
   },
   {
     href: '/sources',
     label: 'Источники',
-    description: 'IP и системы',
+    description: 'Подключённые системы',
     icon: 'sources',
   },
 ] as const;
