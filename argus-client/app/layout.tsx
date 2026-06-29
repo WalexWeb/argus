@@ -14,8 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "АРГУС — SIEM Dashboard",
-  description:
-    "Автоматизированная Регистрация и Группировка Угроз и Событий",
+  description: "Автоматизированная Регистрация и Группировка Угроз и Событий",
   icons: {
     icon: "/Argus.png",
     apple: "/Argus.png",

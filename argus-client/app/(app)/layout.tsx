@@ -1,10 +1,6 @@
-import { Sidebar } from '@/components/layout/Sidebar';
+import { Sidebar } from "@/components/layout/Sidebar";
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mesh-bg flex min-h-screen">
       <Sidebar />

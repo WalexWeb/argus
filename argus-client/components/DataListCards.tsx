@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface DataItem {
   label: string;
@@ -6,7 +6,13 @@ interface DataItem {
   percentage?: number;
 }
 
-export function DataListCards({ title, data }: { title: string; data: DataItem[] }) {
+export function DataListCards({
+  title,
+  data,
+}: {
+  title: string;
+  data: DataItem[];
+}) {
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-zinc-500">
@@ -20,7 +26,10 @@ export function DataListCards({ title, data }: { title: string; data: DataItem[]
   return (
     <div className="space-y-3">
       {data.map((item, index) => (
-        <div key={index} className="rounded-lg border border-white/6 bg-white/2 p-4">
+        <div
+          key={index}
+          className="rounded-lg border border-white/6 bg-white/2 p-4"
+        >
           <div className="flex items-center justify-between gap-3">
             <div className="flex-1">
               <p className="text-sm font-medium text-zinc-300">{item.label}</p>
@@ -36,7 +45,9 @@ export function DataListCards({ title, data }: { title: string; data: DataItem[]
                 {item.value}
               </p>
               {item.percentage !== undefined && (
-                <p className="text-xs text-zinc-500">{item.percentage.toFixed(1)}%</p>
+                <p className="text-xs text-zinc-500">
+                  {item.percentage.toFixed(1)}%
+                </p>
               )}
             </div>
           </div>
