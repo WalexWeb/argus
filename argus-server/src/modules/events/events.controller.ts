@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { EventsService } from './events.service';
 
-@Controller('api/v1/events')
+@Controller('/events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
@@ -23,7 +23,7 @@ export class EventsController {
       events = events.slice(0, parseInt(limit, 10));
     }
 
-    return { total: events.length, events };
+    return { total: events.length, events: events.map((e) => this.eventsService.enrichEvent(e)) };
   }
 
   @Get(':id')
@@ -32,6 +32,6 @@ export class EventsController {
     if (!event) {
       return { error: 'Event not found' };
     }
-    return event;
+    return this.eventsService.enrichEvent(event);
   }
 }
