@@ -50,8 +50,14 @@ export function TimelineChart({
 }: {
   data: { hour: string; count: number }[];
 }) {
+  if (data.length === 0) {
+    return (
+      <p className="py-12 text-center text-sm text-zinc-500">Нет данных</p>
+    );
+  }
+
   const max = Math.max(...data.map((d) => d.count), 1);
-  console.table(data);
+
   return (
     <div
       style={{
@@ -61,7 +67,6 @@ export function TimelineChart({
         padding: "20px 12px 36px",
       }}
     >
-      {/* Горизонтальная сетка */}
       {[0, 25, 50, 75, 100].map((v) => (
         <div
           key={v}
@@ -129,7 +134,9 @@ export function TimelineChart({
                   fontSize: 14,
                 }}
               >
-                {new Date(point.hour).toLocaleTimeString("ru-RU", {
+                {new Date(point.hour).toLocaleString("ru-RU", {
+                  day: "2-digit",
+                  month: "short",
                   hour: "2-digit",
                   minute: "2-digit",
                   timeZone: "UTC",
@@ -139,6 +146,52 @@ export function TimelineChart({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+export function ProcessingPipeline({
+  pipeline,
+}: {
+  pipeline: {
+    received: number;
+    normalized: number;
+    duplicates_removed: number;
+    sent_to_correlation: number;
+    alerts_created: number;
+  };
+}) {
+  const steps = [
+    { label: "Получено событий", value: pipeline.received },
+    { label: "Нормализовано", value: pipeline.normalized },
+    { label: "Удалено дубликатов", value: pipeline.duplicates_removed },
+    { label: "Передано в корреляцию", value: pipeline.sent_to_correlation },
+    { label: "Создано алертов", value: pipeline.alerts_created },
+  ];
+
+  const max = Math.max(...steps.map((s) => s.value), 1);
+
+  return (
+    <div className="space-y-3">
+      {steps.map((step, index) => (
+        <div key={step.label}>
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-zinc-300">{step.label}</span>
+            <span className="font-mono font-semibold text-pistachio-400">
+              {step.value.toLocaleString("ru-RU")}
+            </span>
+          </div>
+          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/5">
+            <div
+              className="h-full rounded-full bg-linear-to-r from-pistachio-600 to-pistachio-400"
+              style={{ width: `${(step.value / max) * 100}%` }}
+            />
+          </div>
+          {index < steps.length - 1 && (
+            <div className="flex justify-center py-1 text-zinc-600">↓</div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -153,6 +206,10 @@ export function DonutChart({
   valueKey: string;
 }) {
   const total = data.reduce((s, d) => s + Number(d[valueKey]), 0);
+
+  if (total === 0) {
+    return <p className="py-8 text-center text-sm text-zinc-500">Нет данных</p>;
+  }
 
   const colors = [
     "#84cc16",
