@@ -10,7 +10,7 @@ import { EventsService } from '../events/events.service';
 import { CorrelationService } from '../correlation/correlation.service';
 import { IngestionService } from './ingestion.service';
 
-@Controller('api/v1/ingest')
+@Controller('ingest')
 export class IngestionController {
   constructor(
     private readonly ingestionService: IngestionService,
@@ -23,6 +23,7 @@ export class IngestionController {
     this.eventsService.clear();
     const loadResult = this.ingestionService.loadMockLogs();
     const alerts = this.correlationService.runCorrelation();
+    this.correlationService.finalizePipelineStats();
 
     return {
       message: 'Моковые логи загружены и проанализированы',
@@ -47,6 +48,7 @@ export class IngestionController {
     }
 
     const alerts = this.correlationService.runCorrelation();
+    this.correlationService.finalizePipelineStats();
 
     return {
       message: 'Событие принято',
